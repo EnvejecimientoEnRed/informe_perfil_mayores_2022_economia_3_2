@@ -29,6 +29,8 @@ export function initChart(iframe) {
             return +a.Value - +b.Value;
         });
 
+        console.log(data);
+
         //Desarrollo del gráfico
         let currentType = 'viz';
 
@@ -46,7 +48,7 @@ export function initChart(iframe) {
         // X axis
         let x = d3.scaleBand()
             .range([ 0, width ])
-            .domain(data.map(function(d) { return d.ccaa; }))
+            .domain(data.map(function(d) { return d.GEO; }))
             .padding(0.25);
 
         svg.append("g")
@@ -164,17 +166,20 @@ export function initChart(iframe) {
         setRRSSLinks('brecha_genero_pensiones');
 
         //Captura de pantalla de la visualización
-        setChartCanvas();
+        //setChartCanvas();
+        setTimeout(() => {
+            setCustomCanvas();
+        }, 6000);        
 
         let pngDownload = document.getElementById('pngImage');
 
         pngDownload.addEventListener('click', function(){
-            setChartCanvasImage('brecha_genero_pensiones');
+            //setChartCanvasImage('brecha_genero_pensiones');
+            setChartCustomCanvasImage('brecha_genero_pensiones');
         });
 
         //Altura del frame
-        setChartHeight(iframe);
-        
+        setChartHeight(iframe);        
     });
 
     
