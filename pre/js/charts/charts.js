@@ -29,12 +29,10 @@ export function initChart(iframe) {
             return +a.Value - +b.Value;
         });
 
-        console.log(data);
-
         //Desarrollo del gráfico
         let currentType = 'viz';
 
-        let margin = {top: 10, right: 10, bottom: 105, left: 35},
+        let margin = {top: 10, right: 10, bottom: 30, left: 95},
             width = document.getElementById('viz').clientWidth - margin.left - margin.right,
             height = document.getElementById('viz').clientHeight - margin.top - margin.bottom;
 
@@ -46,22 +44,20 @@ export function initChart(iframe) {
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // X axis
-        let x = d3.scaleBand()
-            .range([ 0, width ])
-            .domain(data.map(function(d) { return d.GEO; }))
-            .padding(0.25);
+        let x = d3.scaleLinear()
+        .domain([ 0, 50 ])
+        .range([ 0, width]); 
 
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x))
-            .selectAll("text")
-                .attr("transform", "translate(-5,0)rotate(-45)")
-                .style("text-anchor", "end");
+            .call(d3.axisBottom(x));
 
         // Add Y axis
-        var y = d3.scaleLinear()
-            .domain([0,50])
-            .range([ height, 0]);
+        let y = d3.scaleBand()
+        .range([ 0, height ])
+        .domain(data.map(function(d) { return d.GEO; }))
+        .padding(0.25);
+
         svg.append("g")
             .call(d3.axisLeft(y));
 
@@ -79,14 +75,13 @@ export function initChart(iframe) {
                         return COLOR_PRIMARY_1;
                     }
                 })
-                .attr("x", function(d) { return x(d.GEO); })
-                .attr("width", x.bandwidth())
-                .attr("y", function(d) { return y(0); })            
-                .attr("height", function(d) { return 0; })
+                .attr("y", function(d) { return y(d.GEO); })
+                .attr("height", y.bandwidth())
+                .attr("x", function(d) { return x(0); })            
+                .attr("width", function(d) { return 0; })
                 .transition()
-                .duration(2000)            
-                .attr("y", function(d) { return y(+d.Value); })            
-                .attr("height", function(d) { return height - y(+d.Value); });            
+                .duration(2000)
+                .attr("width", function(d) { return x(+d.Value); })
         }
 
         function animateChart() {
