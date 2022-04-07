@@ -21,7 +21,7 @@ COLOR_OTHER_2 = '#731854';
 
 export function initChart(iframe) {
     //Lectura de datos
-    d3.csv('https://raw.githubusercontent.com/CarlosMunozDiazCSIC/informe_perfil_mayores_2022_economia_3_3/main/data/brecha_genero_pensiones_europa_v2.csv', function(error,data) {
+    d3.csv('https://raw.githubusercontent.com/CarlosMunozDiazCSIC/informe_perfil_mayores_2022_economia_3_2/main/data/brecha_genero_pensiones_europa_v2.csv', function(error,data) {
         if (error) throw error;
 
         // sort data
@@ -155,7 +155,7 @@ export function initChart(iframe) {
         //////
 
         //Iframe
-        setFixedIframeUrl('informe_perfil_mayores_2022_economia_3_3','brecha_genero_pensiones');
+        setFixedIframeUrl('informe_perfil_mayores_2022_economia_3_2','brecha_genero_pensiones');
 
         //Redes sociales > Antes tenemos que indicar cuál sería el texto a enviar
         setRRSSLinks('brecha_genero_pensiones');
