@@ -25,7 +25,7 @@ export function initChart(iframe) {
         //Desarrollo del gráfico
         let currentType = 'viz';
 
-        let margin = {top: 10, right: 10, bottom: 30, left: 95},
+        let margin = {top: 5, right: 10, bottom: 20, left: 100},
             width = document.getElementById('chart').clientWidth - margin.left - margin.right,
             height = document.getElementById('chart').clientHeight - margin.top - margin.bottom;
 
@@ -38,21 +38,43 @@ export function initChart(iframe) {
 
         // X axis
         let x = d3.scaleLinear()
-        .domain([ 0, 50 ])
-        .range([ 0, width]); 
+            .domain([ 0, 50 ])
+            .range([ 0, width]);
+        
+        let xAxis = function(g) {
+            g.call(d3.axisBottom(x).ticks(4));
+            svg.call(function(g) {
+                g.call(function(g){
+                    g.selectAll('.tick line')
+                        .attr('class', function(d,i) {
+                            if (d == 0) {
+                                return 'line-special';
+                            }
+                        })
+                        .attr('y1', '0%')
+                        .attr('y2', `-${height}`)
+                });
+            });
+        }
 
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
+            .call(xAxis);
 
         // Add Y axis
         let y = d3.scaleBand()
-        .range([ 0, height ])
-        .domain(data.map(function(d) { return d.GEO; }))
-        .padding(0.25);
+            .range([ 0, height ])
+            .domain(data.map(function(d) { return d.GEO; }))
+            .padding(0.25);
+
+        let yAxis = function(g) {
+            g.call(d3.axisLeft(y));
+            g.call(function(g){g.selectAll('.tick line').remove()});
+            g.call(function(g){g.select('.domain').remove()});
+        }
 
         svg.append("g")
-            .call(d3.axisLeft(y));
+            .call(yAxis);
 
         function initViz() {
             // Barras
@@ -60,9 +82,9 @@ export function initChart(iframe) {
                 .data(data)
                 .enter()
                 .append("rect")
-                .attr('class', 'prueba')
+                .attr('class', 'rect')
                 .attr("fill", function(d) {
-                    if (d.GEO == 'Spain' || d.GEO == 'UE-27') {
+                    if (d.GEO == 'España' || d.GEO == 'UE-27') {
                         return COLOR_ANAG_PRIM_3;
                     } else {
                         return COLOR_PRIMARY_1;
@@ -72,20 +94,47 @@ export function initChart(iframe) {
                 .attr("height", y.bandwidth())
                 .attr("x", function(d) { return x(0); })            
                 .attr("width", function(d) { return 0; })
+                .on('mouseover', function(d,i,e) {
+                    //Opacidad de las barras
+                    let bars = svg.selectAll('.rect');  
+                    bars.each(function() {
+                        this.style.opacity = '0.4';
+                    });
+                    this.style.opacity = '1';
+
+                    //Texto
+                    let html = '';
+                    if (d.GEO == 'UE-27') {
+                        html = '<p class="chart__tooltip--title">' + d.GEO + '</p>' + 
+                            '<p class="chart__tooltip--text">El porcentaje de brecha en las pensiones en la Unión Europea es de un <b>' + numberWithCommas3(parseFloat(d.Value).toFixed(1)) + ' %</b> en favor de los hombres</p>';
+                    } else {
+                        html = '<p class="chart__tooltip--title">' + d.GEO + '</p>' + 
+                            '<p class="chart__tooltip--text">El porcentaje de brecha en las pensiones en este país es de un <b>' + numberWithCommas3(parseFloat(d.Value).toFixed(1)) + ' %</b> en favor de los hombres</p>';
+                    }                    
+            
+                    tooltip.html(html);
+
+                    //Tooltip
+                    positionTooltip(window.event, tooltip);
+                    getInTooltip(tooltip);
+                })
+                .on('mouseout', function(d,i,e) {
+                    //Quitamos los estilos de la línea
+                    let bars = svg.selectAll('.rect');
+                    bars.each(function() {
+                        this.style.opacity = '1';
+                    });
+                
+                    //Quitamos el tooltip
+                    getOutTooltip(tooltip);
+                })
                 .transition()
                 .duration(2000)
                 .attr("width", function(d) { return x(+d.Value); })
         }
 
         function animateChart() {
-            svg.selectAll(".prueba")
-                .attr("fill", function(d) {
-                    if (d.GEO == 'Spain' || d.GEO == 'UE-27') {
-                        return COLOR_ANAG_PRIM_3;
-                    } else {
-                        return COLOR_PRIMARY_1;
-                    }
-                })
+            svg.selectAll(".rect")
                 .attr("x", function(d) { return x(d.GEO); })
                 .attr("width", x.bandwidth())
                 .attr("y", function(d) { return y(0); })            
