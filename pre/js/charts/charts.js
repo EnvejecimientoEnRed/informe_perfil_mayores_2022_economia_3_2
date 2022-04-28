@@ -25,7 +25,7 @@ export function initChart() {
         //Desarrollo del gráfico
         let currentType = 'viz';
 
-        let margin = {top: 5, right: 10, bottom: 20, left: 100},
+        let margin = {top: 12.5, right: 10, bottom: 25, left: 100},
             width = document.getElementById('chart').clientWidth - margin.left - margin.right,
             height = document.getElementById('chart').clientHeight - margin.top - margin.bottom;
 
