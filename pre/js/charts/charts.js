@@ -106,10 +106,10 @@ export function initChart() {
                     let html = '';
                     if (d.GEO == 'UE-27') {
                         html = '<p class="chart__tooltip--title">' + d.GEO + '</p>' + 
-                            '<p class="chart__tooltip--text">El porcentaje de brecha en las pensiones en la Unión Europea es de un <b>' + numberWithCommas3(parseFloat(d.Value).toFixed(1)) + ' %</b> en favor de los hombres</p>';
+                            '<p class="chart__tooltip--text">Los hombres cobran, de media, un <b>' + numberWithCommas3(parseFloat(d.Value).toFixed(1)) + '%</b> que las mujeres en la Unión Europea</p>';
                     } else {
                         html = '<p class="chart__tooltip--title">' + d.GEO + '</p>' + 
-                            '<p class="chart__tooltip--text">El porcentaje de brecha en las pensiones en este país es de un <b>' + numberWithCommas3(parseFloat(d.Value).toFixed(1)) + ' %</b> en favor de los hombres</p>';
+                            '<p class="chart__tooltip--text">Los hombres cobran, de media, un <b>' + numberWithCommas3(parseFloat(d.Value).toFixed(1)) + '%</b> que las mujeres en este país</p>';
                     }                    
             
                     tooltip.html(html);
